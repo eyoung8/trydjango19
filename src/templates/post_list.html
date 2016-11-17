@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block head_title %} Post Index | {{ block.super }} {% endblock head_title %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+{% for obj in object_list %}
+<a href='{{ obj.get_absolute_url }}'>{{obj.title}}</a><br/>
+{{obj.content}}<br/>
+{{obj.timestamp}}<br/>
+{{obj.updated}}<br/>
+{{obj.id}}<br/>
+{% endfor %}
+
+{% endblock content %}
