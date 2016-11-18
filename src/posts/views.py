@@ -1,18 +1,21 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404, render, redirect
+
+from urllib.parse import quote_plus
 
 from .forms import PostForm
 from .models import Post
 # Create your views here.
 
-
-
 def post_create(request):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404 # HttpResponseForbidden() -- less secure
     form = PostForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         instance = form.save(commit=False)
+        instance.user = request.user
         instance.save()
         messages.success(request, "Post Created")
         return HttpResponseRedirect(instance.get_absolute_url())
@@ -26,7 +29,7 @@ def post_detail(request, slug):
     instance = get_object_or_404(Post, slug=slug)
     context = {
         "title": instance.title,
-        "instance": instance
+        "instance": instance,
     }
     return render(request, "post_detail.html", context)
 
@@ -51,6 +54,8 @@ def post_list(request):
     return render(request, "post_list.html", context)
 
 def post_update(request, slug=None):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404 # HttpResponseForbidden() -- less secure
     instance = get_object_or_404(Post, slug=slug)
     form = PostForm(request.POST or None, request.FILES or None, instance=instance)
     if form.is_valid():
@@ -67,6 +72,8 @@ def post_update(request, slug=None):
     return render(request, "post_form.html", context)
 
 def post_delete(request, slug=None):
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise Http404 # HttpResponseForbidden() -- less secure
     instance = get_object_or_404(Post, slug=slug)
     instance.delete()
     messages.success(request, "Post Deleted")

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load urlify %}
 
 {% block head_title %}
 {{ instance.title }} | {{ block.super }}
@@ -9,10 +10,29 @@
 {% if instance.image %}
 <img src='{{ instance.image.url }}' class='img-responsive' />
 {% endif %}
-<h1>{{ title }} <small>{{instance.timestamp}}</h1>
+<h1>{{ title }}</h1>
+{% if instance.user.get_full_name %}
+<p>By {{ instance.user.get_full_name }}</p>
+{% endif %}
+<p>{{instance.timestamp}}</p>
 
 {{instance.content | linebreaks}}<br/>
 
+
+
+<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">
+Share on Facebook
+</a>
+
+<a href="https://twitter.com/home?status={{ instance.title|truncatechars:100| urlify }}%20{{ request.build_absolute_uri }}">
+Share on Twitter
+</a>
+
+<a href='https://plus.google.com/share?url={{ request.build_absolute_uri }}'>
+
+
+<a href="http://www.reddit.com/submit?url={{ request.build_absolute_uri }}
+/&title={{ instance.title | urlify }}">Share on Reddit</a>
 
 </div>
 {% endblock content %}
