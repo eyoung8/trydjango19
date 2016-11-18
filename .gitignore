@@ -1,3 +1,6 @@
+media_cdn/
+static_cdn/
+src/posts/migrations/*.py
 trydjango19.sublime-project
 pip-selfcheck.json
 trydjango19.sublime-workspace
