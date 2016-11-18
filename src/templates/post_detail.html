@@ -13,13 +13,13 @@
 <h1>{{ title }}</h1>
 {% if instance.user.get_full_name %}
 <p>By {{ instance.user.get_full_name }}</p>
-{% endif %}
 <p>{{instance.timestamp}}</p>
+{% endif %} 
 
+<div class="fb-like" data-href="{{ request.build_absolute_uri }}" data-layout="standard" data-action="like" data-size="small" data-show-faces="false" data-share="false"></div>
+<hr/>
 {{instance.content | linebreaks}}<br/>
-
-
-
+<hr/>
 <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">
 Share on Facebook
 </a>
@@ -30,9 +30,11 @@ Share on Twitter
 
 <a href='https://plus.google.com/share?url={{ request.build_absolute_uri }}'>
 
-
 <a href="http://www.reddit.com/submit?url={{ request.build_absolute_uri }}
 /&title={{ instance.title | urlify }}">Share on Reddit</a>
+
+<hr/>
+<div class="fb-comments" data-href="{{ request.build_absolute_uri }}" data-numposts="5"></div>
 
 </div>
 {% endblock content %}
