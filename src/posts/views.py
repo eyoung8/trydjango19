@@ -1,5 +1,6 @@
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
@@ -41,7 +42,15 @@ def post_list(request):
     queryset_list = Post.objects.active()
     if request.user.is_staff or request.user.is_superuser:
         queryset_list = Post.objects.all()
-    paginator = Paginator(queryset_list, 10) # Show 10 contacts per page
+    search_query = request.GET.get('search_query')
+    if search_query:
+        queryset_list = queryset_list.filter(
+            Q(title__icontains=search_query) |
+            Q(content__icontains=search_query) |
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query)
+            ).distinct()
+    paginator = Paginator(queryset_list, 5) # Show 5 blogs per page
     today = timezone.now().date()
     page = request.GET.get('page')
     try:
